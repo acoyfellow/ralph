@@ -12,11 +12,10 @@
       "content/",
       "README.md",
       "AGENTS.md",
-      "scripts/ralph/"
-    ],
-    "denyPaths": [
+      "scripts/ralph/",
       ".github/workflows/"
-    ]
+    ],
+    "denyPaths": []
   },
   "dependencies": {
     "allowDependencyChanges": false

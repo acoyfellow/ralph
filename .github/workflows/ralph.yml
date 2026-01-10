@@ -78,7 +78,7 @@ jobs:
             -f scripts/ralph/constraints.json \
             -f scripts/ralph/failure.json \
             -f scripts/ralph/ralph.md \
-            "Execute exactly ONE Ralph iteration. Follow scripts/ralph/ralph.md."
+            -- "Execute exactly ONE Ralph iteration. Follow scripts/ralph/ralph.md."
 
       - name: Typecheck/tests
         shell: bash
