@@ -30,3 +30,4 @@ REQUIRE_TESTS: true
 ## Commands
 - Typecheck: echo "No typecheck configured"
 - Tests: echo "No tests configured"
+PAUSED: true
