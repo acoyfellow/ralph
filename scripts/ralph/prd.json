@@ -1,0 +1,15 @@
+{
+  "project": "acoyfellow/ralph",
+  "stories": [
+    {
+      "id": "S1",
+      "title": "Boot Ralph automation scaffold",
+      "status": "done",
+      "acceptance": [
+        "It is verifiable by CI",
+        "It is small enough for one run"
+      ],
+      "notes": "Keep stories tiny. 5–15 minutes of compute."
+    }
+  ]
+}
