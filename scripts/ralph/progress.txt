@@ -1,0 +1,10 @@
+# Progress / Learnings
+
+## Commands
+- typecheck: echo "No typecheck configured"
+- test: echo "No tests configured"
+
+## Conventions
+- Small commits
+- One story per run
+- Never push failing tests
