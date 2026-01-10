@@ -38,7 +38,9 @@ jobs:
           
           echo "Validating Ralph prerequisites..."
           
-          # Check that AGENTS.md exists and has PAUSED: false
+          # Check that AGENTS.md exists and has explicit PAUSED: false
+          # (The previous step only checks for PAUSED: true to exit early;
+          #  this ensures PAUSED is explicitly set to false, not missing/invalid)
           if [ ! -f AGENTS.md ]; then
             echo "ERROR: AGENTS.md not found"
             exit 1
