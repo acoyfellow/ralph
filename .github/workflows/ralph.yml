@@ -31,6 +31,48 @@ jobs:
             exit 0
           fi
 
+      - name: Validate Ralph prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          echo "Validating Ralph prerequisites..."
+          
+          # Check that AGENTS.md exists and has PAUSED: false
+          if [ ! -f AGENTS.md ]; then
+            echo "ERROR: AGENTS.md not found"
+            exit 1
+          fi
+          
+          if grep -qE '^PAUSED:\s*true\s*$' AGENTS.md; then
+            echo "ERROR: AGENTS.md has PAUSED: true (should have been caught by previous step)"
+            exit 1
+          fi
+          
+          if ! grep -qE '^PAUSED:\s*false\s*$' AGENTS.md; then
+            echo "ERROR: AGENTS.md must have 'PAUSED: false'"
+            exit 1
+          fi
+          
+          # Check that scripts/ralph/prd.json exists and is valid JSON
+          if [ ! -f scripts/ralph/prd.json ]; then
+            echo "ERROR: scripts/ralph/prd.json not found"
+            exit 1
+          fi
+          
+          if ! python3 -m json.tool scripts/ralph/prd.json > /dev/null 2>&1; then
+            echo "ERROR: scripts/ralph/prd.json is not valid JSON"
+            exit 1
+          fi
+          
+          # Check that scripts/ralph/session.txt exists
+          if [ ! -f scripts/ralph/session.txt ]; then
+            echo "ERROR: scripts/ralph/session.txt not found"
+            exit 1
+          fi
+          
+          echo "All prerequisites validated successfully."
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
