@@ -1,0 +1,154 @@
+name: ralph
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - "AGENTS.md"
+      - "scripts/ralph/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ralph-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stop if paused
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -qE '^PAUSED:\s*true\s*$' AGENTS.md; then
+            echo "PAUSED: true — exiting."
+            exit 0
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install OpenCode
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install -g opencode-ai
+
+      - name: Restore OpenCode auth (optional)
+        shell: bash
+        env:
+          OPENCODE_AUTH_JSON: ${{ secrets.OPENCODE_AUTH_JSON }}
+        run: |
+          set -euo pipefail
+          if [ -n "${OPENCODE_AUTH_JSON:-}" ]; then
+            mkdir -p ~/.local/share/opencode
+            printf "%s" "$OPENCODE_AUTH_JSON" > ~/.local/share/opencode/auth.json
+          fi
+
+      - name: Write .env (provider keys)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .env <<'EOF'
+          # Put whichever provider you use:
+          ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
+          # OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          EOF
+
+      - name: Run agent (one iteration)
+        shell: bash
+        env:
+          CI: "true"
+        run: |
+          set -euo pipefail
+          # TODO: replace model/agent flags with your preferred setup.
+          opencode run \
+            -f AGENTS.md \
+            -f scripts/ralph/prd.json \
+            -f scripts/ralph/session.txt \
+            -f scripts/ralph/progress.txt \
+            -f scripts/ralph/constraints.json \
+            -f scripts/ralph/failure.json \
+            -f scripts/ralph/ralph.md \
+            "Execute exactly ONE Ralph iteration. Follow scripts/ralph/ralph.md."
+
+      - name: Typecheck/tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "No typecheck configured"
+          echo "No tests configured"
+
+      - name: Enforce constraints (diff guard)
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/ralph/guard.sh
+          scripts/ralph/guard.sh scripts/ralph/constraints.json
+
+      - name: Commit + push (success path)
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "ralph-bot"
+          git config user.email "ralph-bot@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && { echo "No changes"; exit 0; }
+          git commit -m "ralph: one iteration"
+          git push
+
+      - name: Failure handler (persist failure + retrigger)
+        if: failure()
+        shell: bash
+        env:
+          RUN_URL: ${{ format('https://github.com/{0}/actions/runs/{1}', github.repository, github.run_id) }}
+        run: |
+          set -euo pipefail
+
+          MAX_RETRIES=$(grep -E '^MAX_FAILURE_RETRIES:' -m1 AGENTS.md | awk '{print $2}' || true)
+          MAX_RETRIES=${MAX_RETRIES:-5}
+
+          mkdir -p scripts/ralph
+          if [ ! -f scripts/ralph/failure.json ]; then
+            cat > scripts/ralph/failure.json <<'JSON'
+          {"consecutiveFailures":0,"lastFailureSummary":"","lastFailureRunUrl":"","lastFailureAt":""}
+          JSON
+          fi
+
+          node - <<'NODE'
+          const fs = require("fs");
+          const p = "scripts/ralph/failure.json";
+          const doc = JSON.parse(fs.readFileSync(p,"utf8"));
+          doc.consecutiveFailures = (doc.consecutiveFailures || 0) + 1;
+          doc.lastFailureRunUrl = process.env.RUN_URL;
+          doc.lastFailureAt = new Date().toISOString();
+          doc.lastFailureSummary = "Workflow failed before green gates. See run URL.";
+          fs.writeFileSync(p, JSON.stringify(doc, null, 2) + "\n");
+          NODE
+
+          FAILS=$(node -p "require('./scripts/ralph/failure.json').consecutiveFailures")
+          echo "Consecutive failures: $FAILS / $MAX_RETRIES"
+
+          if [ "$FAILS" -ge "$MAX_RETRIES" ]; then
+            echo "Max failures reached. Auto-pausing."
+            if grep -qE '^PAUSED:\s*' AGENTS.md; then
+              sed -i 's/^PAUSED:\s*.*/PAUSED: true/' AGENTS.md
+            else
+              echo "PAUSED: true" >> AGENTS.md
+            fi
+          fi
+
+          git config user.name "ralph-bot"
+          git config user.email "ralph-bot@users.noreply.github.com"
+          git add scripts/ralph/failure.json AGENTS.md
+          git diff --cached --quiet && exit 1
+          git commit -m "ralph: record failure ($FAILS/$MAX_RETRIES)"
+          git push

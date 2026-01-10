@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "iteration": {
+    "maxFilesChanged": 12,
+    "maxLinesChanged": 400
+  },
+  "scope": {
+    "allowPaths": [
+      "src/",
+      "app/",
+      "scripts/",
+      "content/",
+      "README.md",
+      "AGENTS.md",
+      "scripts/ralph/"
+    ],
+    "denyPaths": [
+      ".github/workflows/"
+    ]
+  },
+  "dependencies": {
+    "allowDependencyChanges": false
+  }
+}
