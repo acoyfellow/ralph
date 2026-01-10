@@ -36,6 +36,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
       - name: Install OpenCode
         shell: bash
         run: |
@@ -84,6 +87,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+
+          # Validate JSON files
+          echo "Validating JSON files..."
+          for file in .opencode/opencode.json scripts/ralph/*.json; do
+            if ! jq empty "$file"; then
+              echo "JSON validation failed for $file"
+              exit 1
+            fi
+          done
+          echo "All JSON files are valid."
+
           echo "No typecheck configured"
           echo "No tests configured"
 
