@@ -21,6 +21,12 @@ REQUIRE_TESTS: true
 - Enforce constraints via scripts/ralph/guard.sh before committing.
 - Keep changes minimal.
 
+## Principles
+- Fresh context each run (clean checkout).
+- Single goal: first todo story only.
+- Iterate quickly: small change, let the loop repeat.
+- Declarative: acceptance lives in prd.json.
+
 ## Commands
 - Typecheck: echo "No typecheck configured"
 - Tests: echo "No tests configured"

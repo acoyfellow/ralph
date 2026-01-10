@@ -4,7 +4,7 @@
     {
       "id": "S1",
       "title": "Boot Ralph automation scaffold",
-      "status": "todo",
+      "status": "done",
       "acceptance": [
         "It is verifiable by CI",
         "It is small enough for one run"
