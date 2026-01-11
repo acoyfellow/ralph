@@ -103,7 +103,7 @@ jobs:
         run: |
           set -euo pipefail
           opencode run \
-            --model anthropic:claude-sonnet-4-5-20250929 \
+            --model anthropic/claude-sonnet-4-5-20250929 \
             -f AGENTS.md \
             -f scripts/ralph/prd.json \
             -f scripts/ralph/session.txt \
