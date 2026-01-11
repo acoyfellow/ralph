@@ -113,6 +113,8 @@ jobs:
           set -euo pipefail
           # TODO: replace model/agent flags with your preferred setup.
           opencode run \
+            --provider anthropic \
+            --model claude-3-5-sonnet-20240620 \
             -f AGENTS.md \
             -f scripts/ralph/prd.json \
             -f scripts/ralph/session.txt \
