@@ -151,8 +151,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name "ralph-bot"
-          git config user.email "noreply@github.com"
+          git config user.name "${{ github.repository_owner }}"
+          git config user.email "${{ github.repository_owner }}@users.noreply.github.com"
           git add -A
           git diff --cached --quiet && { echo "No changes"; exit 0; }
           git commit -m "ralph: one iteration"
@@ -199,8 +199,8 @@ jobs:
             fi
           fi
 
-          git config user.name "ralph-bot"
-          git config user.email "noreply@github.com"
+          git config user.name "${{ github.repository_owner }}"
+          git config user.email "${{ github.repository_owner }}@users.noreply.github.com"
           git add scripts/ralph/failure.json AGENTS.md
           git diff --cached --quiet && exit 1
           git commit -m "ralph: record failure ($FAILS/$MAX_RETRIES)"
