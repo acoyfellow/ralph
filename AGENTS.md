@@ -13,7 +13,7 @@
 - scripts/ralph/failure.json
 
 ## Rules
-- If PAUSED: true → exit immediately.
+- If PAUSED is true → exit immediately.
 - Do exactly ONE story per run.
 - Pick first story in prd.json with status "todo".
 - Set to "doing", implement, run gates, set to "done".
