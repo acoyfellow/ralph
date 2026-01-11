@@ -99,11 +99,10 @@ jobs:
         shell: bash
         env:
           CI: "true"
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           opencode run \
-            --model anthropic/claude-sonnet-4-5-20250929 \
+            --model opencode/glm-4.7-free \
             -f AGENTS.md \
             -f scripts/ralph/prd.json \
             -f scripts/ralph/session.txt \
