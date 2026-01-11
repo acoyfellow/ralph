@@ -26,7 +26,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -qE '^PAUSED:\s*true\s*$' AGENTS.md; then
+          if grep -qE '^-\s+PAUSED:\s*true\s*$' AGENTS.md; then
             echo "PAUSED: true — exiting."
             exit 0
           fi
@@ -46,7 +46,7 @@ jobs:
             exit 1
           fi
           
-          if ! grep -qE '^PAUSED:\s*false\s*$' AGENTS.md; then
+          if ! grep -qE '^-\s+PAUSED:\s*false\s*$' AGENTS.md; then
             echo "ERROR: AGENTS.md must have 'PAUSED: false'"
             exit 1
           fi
@@ -166,7 +166,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          MAX_RETRIES=$(grep -E '^MAX_FAILURE_RETRIES:' -m1 AGENTS.md | awk '{print $2}' || true)
+          MAX_RETRIES=$(grep -E '^-\s+MAX_FAILURE_RETRIES:' -m1 AGENTS.md | awk '{print $3}' || true)
           MAX_RETRIES=${MAX_RETRIES:-5}
 
           mkdir -p scripts/ralph
@@ -192,10 +192,10 @@ jobs:
 
           if [ "$FAILS" -ge "$MAX_RETRIES" ]; then
             echo "Max failures reached. Auto-pausing."
-            if grep -qE '^PAUSED:\s*' AGENTS.md; then
-              sed -i 's/^PAUSED:\s*.*/PAUSED: true/' AGENTS.md
+            if grep -qE '^-\s+PAUSED:\s*' AGENTS.md; then
+              sed -i 's/^-\s+PAUSED:\s*.*/- PAUSED: true/' AGENTS.md
             else
-              echo "PAUSED: true" >> AGENTS.md
+              echo "- PAUSED: true" >> AGENTS.md
             fi
           fi
 
