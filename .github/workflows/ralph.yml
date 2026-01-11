@@ -95,26 +95,15 @@ jobs:
             printf "%s" "$OPENCODE_AUTH_JSON" > ~/.local/share/opencode/auth.json
           fi
 
-      - name: Write .env (provider keys)
-        shell: bash
-        run: |
-          set -euo pipefail
-          cat > .env <<'EOF'
-          # Put whichever provider you use:
-          ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
-          # OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
-          EOF
-
       - name: Run agent (one iteration)
         shell: bash
         env:
           CI: "true"
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           # TODO: replace model/agent flags with your preferred setup.
           opencode run \
-            --provider anthropic \
-            --model claude-3-5-sonnet-20240620 \
             -f AGENTS.md \
             -f scripts/ralph/prd.json \
             -f scripts/ralph/session.txt \
