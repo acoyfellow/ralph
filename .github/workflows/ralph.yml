@@ -149,10 +149,13 @@ jobs:
 
       - name: Commit + push (success path)
         shell: bash
+        env:
+          BOT_NAME: ${{ secrets.RALPH_BOT_NAME || 'ralph-bot' }}
+          BOT_EMAIL: ${{ secrets.RALPH_BOT_EMAIL || 'ralph-bot@users.noreply.github.com' }}
         run: |
           set -euo pipefail
-          git config user.name "${{ github.repository_owner }}"
-          git config user.email "${{ github.repository_owner }}@users.noreply.github.com"
+          git config user.name "$BOT_NAME"
+          git config user.email "$BOT_EMAIL"
           git add -A
           git diff --cached --quiet && { echo "No changes"; exit 0; }
           git commit -m "ralph: one iteration"
@@ -163,6 +166,8 @@ jobs:
         shell: bash
         env:
           RUN_URL: ${{ format('https://github.com/{0}/actions/runs/{1}', github.repository, github.run_id) }}
+          BOT_NAME: ${{ secrets.RALPH_BOT_NAME || 'ralph-bot' }}
+          BOT_EMAIL: ${{ secrets.RALPH_BOT_EMAIL || 'ralph-bot@users.noreply.github.com' }}
         run: |
           set -euo pipefail
 
@@ -199,8 +204,8 @@ jobs:
             fi
           fi
 
-          git config user.name "${{ github.repository_owner }}"
-          git config user.email "${{ github.repository_owner }}@users.noreply.github.com"
+          git config user.name "$BOT_NAME"
+          git config user.email "$BOT_EMAIL"
           git add scripts/ralph/failure.json AGENTS.md
           git diff --cached --quiet && exit 1
           git commit -m "ralph: record failure ($FAILS/$MAX_RETRIES)"
