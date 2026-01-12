@@ -1,6 +1,6 @@
 {
-  "consecutiveFailures": 0,
-  "lastFailureSummary": "",
-  "lastFailureRunUrl": "",
-  "lastFailureAt": ""
+  "consecutiveFailures": 1,
+  "lastFailureSummary": "Workflow failed before green gates. See run URL.",
+  "lastFailureRunUrl": "https://github.com/acoyfellow/ralph/actions/runs/20920960318",
+  "lastFailureAt": "2026-01-12T13:23:48.279Z"
 }
