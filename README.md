@@ -8,11 +8,11 @@ Automated agent that processes stories from a PRD, implementing one story per ru
 
 Ralph follows a simple loop:
 
-1. **Read state**: Loads `prd.json`, `session.txt`, `progress.txt`, `constraints.json`, `failure.json`
+1. **Read state**: Loads `prd.json`, `progress.txt`, `constraints.json`, `failure.json`
 2. **Pick story**: Selects first story with status `"todo"` from `prd.json`
 3. **Implement**: Marks story `"doing"`, implements minimal change to meet acceptance criteria
 4. **Validate**: Runs typecheck/tests, then `scripts/ralph/guard.sh` to enforce constraints
-5. **Complete**: If green → marks story `"done"`, logs to `session.txt`, commits + pushes, exits
+5. **Complete**: If green → marks story `"done"`, commits + pushes, exits
 
 ## Configuration
 
@@ -46,7 +46,6 @@ Contract defining rules:
 
 **Auxiliary state**:
 - `progress.txt`: Learnings and conventions
-- `session.txt`: Run-by-run log
 
 ## Principles
 
