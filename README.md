@@ -40,9 +40,13 @@ Contract defining rules:
 
 ## State Files
 
+**Core state** (defines repo status):
+- `prd.json`: Stories with status (`todo`/`doing`/`done`)
+- `failure.json`: Failure tracking and recovery state
+
+**Auxiliary state**:
 - `progress.txt`: Learnings and conventions
 - `session.txt`: Run-by-run log
-- `failure.json`: Failure tracking and recovery state
 
 ## Principles
 
@@ -57,7 +61,7 @@ Ralph runs automatically via GitHub Actions, creating a self-perpetuating loop:
 
 1. **Trigger**: Workflow runs on:
    - Manual trigger (`workflow_dispatch`)
-   - Push to `AGENTS.md` or `scripts/ralph/**` (including Ralph's own commits)
+   - Bot push to `AGENTS.md` or `scripts/ralph/**` (only ralph-bot commits trigger auto-runs; human commits are filtered)
 
 2. **Execution**:
    - Checks if `PAUSED: false` (exits early if paused)

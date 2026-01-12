@@ -16,6 +16,9 @@ concurrency:
 
 jobs:
   run:
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      github.event.pusher.name == 'ralph-bot'
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
