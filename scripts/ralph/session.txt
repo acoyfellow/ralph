@@ -1,4 +1,0 @@
-RALPH SESSION LOG
-
-- Boot: initial scaffold
-- S1: simplified docs/loop guidance
