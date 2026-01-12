@@ -61,13 +61,7 @@ jobs:
             echo "ERROR: scripts/ralph/prd.json is not valid JSON"
             exit 1
           fi
-          
-          # Check that scripts/ralph/session.txt exists
-          if [ ! -f scripts/ralph/session.txt ]; then
-            echo "ERROR: scripts/ralph/session.txt not found"
-            exit 1
-          fi
-          
+
           echo "All prerequisites validated successfully."
 
       - name: Setup Node
@@ -105,12 +99,10 @@ jobs:
             --model opencode/glm-4.7-free \
             -f AGENTS.md \
             -f scripts/ralph/prd.json \
-            -f scripts/ralph/session.txt \
             -f scripts/ralph/progress.txt \
             -f scripts/ralph/constraints.json \
             -f scripts/ralph/failure.json \
-            -f scripts/ralph/ralph.md \
-            -- "Execute exactly ONE Ralph iteration. Follow scripts/ralph/ralph.md."
+            -- "Execute exactly ONE Ralph iteration. Follow AGENTS.md."
 
       - name: Typecheck/tests
         shell: bash
